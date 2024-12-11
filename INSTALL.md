@@ -1,5 +1,3 @@
-![Description de l'image](https://raw.githubusercontent.com/WildCodeSchool/TSSR-2411-P2-G4/refs/heads/main/screenshots/cc3e918a-2c3e-4b68-a7a9-55fbde4e6220.webp)
-
 
 # Installation d'un Client Windows 10 - CLIWIN01
 
@@ -45,6 +43,9 @@
 - **Vérification du nom de la machine** : Ouvrez une fenêtre **Invite de commandes** et tapez la commande `hostname` pour vérifier que le nom de l'ordinateur est bien "CLIWIN01".
 - **Vérification du compte utilisateur** : Tapez `net user wilder` pour vérifier que le compte "wilder" existe et qu'il est membre du groupe des administrateurs locaux.
 - **Vérification de l'adresse IP** : Tapez `ipconfig` dans l'Invite de commandes pour vérifier que l'adresse IP est bien définie sur `172.16.10.20`.
+
+
+
 
 
 # Installation et Configuration d'Ubuntu 22.04/24.04 LTS
