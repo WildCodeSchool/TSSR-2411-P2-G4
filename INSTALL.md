@@ -1,3 +1,5 @@
+![Description de l'image](https://raw.githubusercontent.com/WildCodeSchool/TSSR-2411-P2-G4/refs/heads/main/screenshots/cc3e918a-2c3e-4b68-a7a9-55fbde4e6220.webp)
+
 
 # Installation d'un Client Windows 10 - CLIWIN01
 
