@@ -9,9 +9,7 @@
 - **Création d'un support d'installation** : Utilisez l'outil de création de média pour créer une clé USB bootable.
 - **Démarrage de l'installation** : Insérez la clé USB dans la machine cible et redémarrez. Assurez-vous que la machine boote depuis la clé USB dans le BIOS/UEFI.
 - **Choix de la langue et des paramètres** : Sélectionnez la langue, la région et la disposition du clavier.
--
--
--   **Installation** : Suivez les instructions à l'écran pour installer Windows 10. Une fois l'installation terminée, le système redémarre et la configuration initiale se termine.
+- **Installation** : Suivez les instructions à l'écran pour installer Windows 10. Une fois l'installation terminée, le système redémarre et la configuration initiale se termine.
 
 ## 2. Configuration du Nom de la Machine (CLIWIN01)
 
