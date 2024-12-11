@@ -1,7 +1,6 @@
 # TSSR-2411-P2-G4
 
 ![Diagramme d'architecture réseau](https://miro.medium.com/v2/resize:fit:720/format:webp/1*-UvYjyI57PdZ_xC1WwSxAA.png)
-![Bash vs PowerShell](https://i.imgur.com/T2JmDcb.png)
 
 
 # Description du Projet
