@@ -1,6 +1,7 @@
 # TSSR-2411-P2-G4
 
 ![Diagramme d'architecture réseau](https://miro.medium.com/v2/resize:fit:720/format:webp/1*-UvYjyI57PdZ_xC1WwSxAA.png)
+![Diagramme d'architecture réseau]([https://miro.medium.com/v2/resize:fit:720/format:webp/1*-UvYjyI57PdZ_xC1WwSxAA.png](https://www.google.com/url?sa=i&url=https%3A%2F%2Ffr.fiverr.com%2Ftowsed%2Fwrite-any-script-in-bash-batch-and-powershell&psig=AOvVaw0Owl09xWSYCs-22JLsN5F7&ust=1734041204442000&source=images&cd=vfe&opi=89978449&ved=0CBQQjRxqFwoTCKDNyILdoIoDFQAAAAAdAAAAABAT))
 
 
 # Description du Projet
