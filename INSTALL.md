@@ -45,3 +45,49 @@
 - **Vérification du nom de la machine** : Ouvrez une fenêtre **Invite de commandes** et tapez la commande `hostname` pour vérifier que le nom de l'ordinateur est bien "CLIWIN01".
 - **Vérification du compte utilisateur** : Tapez `net user wilder` pour vérifier que le compte "wilder" existe et qu'il est membre du groupe des administrateurs locaux.
 - **Vérification de l'adresse IP** : Tapez `ipconfig` dans l'Invite de commandes pour vérifier que l'adresse IP est bien définie sur `172.16.10.20`.
+
+
+# Installation et Configuration d'Ubuntu 22.04/24.04 LTS
+
+## 1. Installation d'Ubuntu 22.04/24.04 LTS
+
+### 1.1 Préparation de la machine
+- **Télécharger l'ISO d'Ubuntu** : Téléchargez l'image ISO d'Ubuntu 22.04 ou 24.04 LTS depuis le site officiel d'Ubuntu.
+- **Créer un support d'installation** : Utilisez un outil comme Rufus ou balenaEtcher pour créer une clé USB bootable à partir de l'image ISO.
+
+### 1.2 Démarrer l'installation
+- Insérez la clé USB dans la machine cible et redémarrez-la. Assurez-vous que le BIOS/UEFI est configuré pour booter à partir de la clé USB.
+- Sélectionnez **Install Ubuntu** pour commencer l'installation.
+
+### 1.3 Configuration initiale
+- **Langue et clavier** : Sélectionnez votre langue préférée et la disposition du clavier.
+- **Connexion à Internet** : Vous pouvez choisir de vous connecter à un réseau Wi-Fi ou de configurer une connexion Ethernet (si nécessaire).
+- **Type d'installation** : Choisissez Installation normale ou Installation minimale, selon vos préférences.
+- **Partitionnement** : Laissez Ubuntu partitionner automatiquement votre disque ou configurez-le manuellement selon vos besoins.
+
+### 1.4 Finalisation de l'installation
+- **Nom de l'ordinateur et identifiants utilisateur** : Lors de la configuration de l'utilisateur, entrez le nom de la machine comme `CLILIN01` et créez un utilisateur avec le nom `wilder` et le mot de passe `Azerty1*`.
+- **Configuration réseau** : Vous pouvez ignorer cette étape si vous souhaitez configurer l'adresse IP plus tard dans les paramètres système.
+
+### 1.5 Redémarrage
+Une fois l'installation terminée, redémarrez la machine et retirez la clé USB pour démarrer Ubuntu à partir du disque dur.
+
+## 2. Configuration du Nom de la Machine (CLILIN01)
+- **Accéder aux paramètres système** : Allez dans **Paramètres > Détails > À propos**.
+- **Modifier le nom de la machine** : Cliquez sur **Nom de l'ordinateur** et entrez `CLILIN01`. Un redémarrage peut être nécessaire pour appliquer le changement.
+
+## 3. Création du Compte Utilisateur 'wilder' dans le groupe sudo
+
+### Création de l'utilisateur
+1. Ouvrez un terminal.
+2. Tapez la commande suivante pour créer l'utilisateur :
+    ```bash
+    sudo adduser wilder
+    ```
+    Entrez le mot de passe `Azerty1*` lorsque cela est demandé.
+
+### Ajout de l'utilisateur au groupe sudo
+Après avoir créé l'utilisateur, ajoutez-le au groupe `sudo` pour lui accorder les privilèges administratifs avec la commande suivante :
+```bash
+sudo usermod -aG sudo wilder
+
