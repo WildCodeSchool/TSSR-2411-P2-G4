@@ -20,6 +20,13 @@ L'objectif principal consiste à :
 L'objectif secondaire est optionnel et permet d'améliorer l'évaluation finale :
 - Depuis un serveur, cibler une machine cliente avec un système d'exploitation différent.
 
+## Membres du Groupe de Projet et Rôles par Sprint
+
+| Sprint 1                             | Product Owner (PO) | Scrum Master (SM) | Développeurs               | Objectifs                                                                                                                                     |
+|--------------------------------------|--------------------|-------------------|---------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------|
+| Sprint 1 : Mise en place de l'environnement | Adel              | Barbara           | Benjamen, Maxime    | - Analyse des besoins du projet; définition des rôle de chaque membre du groupe; mise en place et connectivité des VM. |
+
+
 ## Environnement
 
 ### Clients
