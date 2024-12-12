@@ -149,3 +149,107 @@ Nom de l'ordinateur : CLILIN01
 Utilisateur : wilder
 Mot de passe : Azerty1*
 IP fixe : 172.16.10.30/24
+
+----
+
+# Installation et Configuration d'un Serveur Windows Server 2022
+
+## Prérequis
+- Image ISO de Windows Server 2022 (téléchargeable sur [Microsoft Evaluation Center](https://www.microsoft.com/en-us/evalcenter/evaluate-windows-server-2022)).
+- Une clé USB bootable (créée avec un outil comme **Rufus**).
+
+---
+
+## Étape 1 : Préparer l'installation
+1. **Créer la clé USB bootable** :
+   - Utilise l'outil **Rufus** pour écrire l'image ISO sur une clé USB.
+   - Assure-toi que la clé USB est bootable.
+
+2. **Démarrer sur la clé USB** :
+   - Accède au BIOS/UEFI de la machine et configure le démarrage sur la clé USB.
+   - Dans le menu, sélectionne **Installer Windows Server**.
+
+---
+
+## Étape 2 : Installer Windows Server 2022
+1. **Paramètres initiaux** :
+   - Choisis la langue, le format de date/heure et la disposition du clavier.
+   - Clique sur **Suivant**, puis sur **Installer maintenant**.
+
+2. **Sélectionner l'édition** :
+   - Choisis l’édition de Windows Server (exemple : **Standard** ou **Datacenter**).
+   - Sélectionne **Server with Desktop Experience** pour installer l’interface graphique.
+
+3. **Accepter le contrat de licence** :
+   - Coche la case **J'accepte les termes du contrat de licence**.
+   - Clique sur **Suivant**.
+
+4. **Choisir le type d'installation** :
+   - Sélectionne **Personnalisée : installer uniquement Windows (avancé)**.
+
+5. **Configurer le disque** :
+   - Sélectionne le disque sur lequel installer Windows Server.
+   - Formate le disque si nécessaire.
+   - Clique sur **Suivant**.
+
+6. **Installation** :
+   - L’installation démarre. Attends que le processus se termine et redémarre automatiquement.
+
+---
+
+## Étape 3 : Configuration initiale
+1. **Créer le mot de passe Administrateur** :
+   - À la fin de l'installation, définis un mot de passe pour le compte `Administrator` :
+     - Mot de passe : `Azerty1*`.
+
+2. **Se connecter** :
+   - Utilise le compte `Administrator` et le mot de passe défini (`Azerty1*`).
+
+---
+
+## Étape 4 : Configurer une adresse IP fixe
+1. **Accéder aux paramètres réseau** :
+   - Ouvre le **Gestionnaire de serveur**.
+   - Dans **Configuration locale du serveur**, clique sur **Ethernet**.
+
+2. **Configurer une adresse IP fixe** :
+   - Clique droit sur l’interface réseau > **Propriétés**.
+   - Sélectionne **Protocole Internet Version 4 (TCP/IPv4)** > **Propriétés**.
+   - Configure les paramètres suivants :
+     - **Adresse IP** : `172.16.10.5`
+     - **Masque de sous-réseau** : `255.255.255.0`
+     - **Passerelle par défaut** : `172.16.10.1`
+     - **Serveur DNS préféré** : `8.8.8.8`
+     - **Serveur DNS auxiliaire** : `8.8.4.4`
+   - Clique sur **OK** pour appliquer les changements.
+
+3. **Vérifier la configuration réseau** :
+   - Ouvre une console **PowerShell** et utilise les commandes suivantes :
+     ```powershell
+     ipconfig
+     Test-Connection 8.8.8.8
+     ```
+
+---
+
+## Étape 5 : Renommer le serveur
+1. **Changer le nom de l'ordinateur** :
+   - Dans le **Gestionnaire de serveur**, clique sur **Nom de l'ordinateur** dans **Configuration locale du serveur**.
+   - Clique sur **Modifier**, entre le nom `SRVWIN01` et confirme.
+   - Redémarre le serveur pour appliquer le changement.
+
+---
+
+## Étape 6 : Effectuer les mises à jour
+1. **Configurer Windows Update** :
+   - Accède à **Paramètres** > **Mises à jour et sécurité** > **Windows Update**.
+   - Recherche et installe toutes les mises à jour disponibles.
+
+---
+
+## Résumé de la configuration
+- **Nom de l'ordinateur** : `SRVWIN01`
+- **Utilisateur Administrateur** : `Administrator`
+- **Mot de passe** : `Azerty1*`
+- **Adresse IP fixe** : `172.16.10.5/24`
+
