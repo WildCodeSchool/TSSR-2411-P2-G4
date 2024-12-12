@@ -1,7 +1,7 @@
 
-# Installation d'un Client Windows 10 - CLIWIN01
+# Installation d'un Client Windows 11 - CLIWIN01
 
-## 1. Installation de Windows 10
+## 1. Installation de Windows 11
 
 - **Préparation de la machine** : Téléchargez l'image ISO de Windows 10 depuis le site officiel de Microsoft.
 - **Création d'un support d'installation** : Utilisez l'outil de création de média pour créer une clé USB bootable.
@@ -46,8 +46,9 @@
 
 
 
+------
 
------
+
 
 # Installation et Configuration d'un Client Ubuntu 22.04/24.04 LTS
 
@@ -55,7 +56,7 @@
 - Image ISO d'Ubuntu 22.04/24.04 LTS (téléchargeable sur [Ubuntu Downloads](https://ubuntu.com/download/desktop)).
 - Une clé USB bootable créée avec un outil comme **Rufus** (Windows) ou **Etcher** (Linux/macOS).
 
----
+--
 
 ## Étape 1 : Installation d'Ubuntu
 1. **Démarrage sur la clé USB** :
@@ -82,7 +83,7 @@
    - Lance l'installation.
    - Redémarre la machine à la fin du processus et retire la clé USB.
 
----
+--
 
 ## Étape 2 : Configuration réseau avec une IP fixe
 1. **Accès à la console** :
@@ -150,7 +151,7 @@ Utilisateur : wilder
 Mot de passe : Azerty1*
 IP fixe : 172.16.10.30/24
 
-----
+-----
 
 # Installation et Configuration d'un Serveur Windows Server 2022
 
@@ -158,7 +159,7 @@ IP fixe : 172.16.10.30/24
 - Image ISO de Windows Server 2022 (téléchargeable sur [Microsoft Evaluation Center](https://www.microsoft.com/en-us/evalcenter/evaluate-windows-server-2022)).
 - Une clé USB bootable (créée avec un outil comme **Rufus**).
 
----
+--
 
 ## Étape 1 : Préparer l'installation
 1. **Créer la clé USB bootable** :
@@ -169,7 +170,7 @@ IP fixe : 172.16.10.30/24
    - Accède au BIOS/UEFI de la machine et configure le démarrage sur la clé USB.
    - Dans le menu, sélectionne **Installer Windows Server**.
 
----
+--
 
 ## Étape 2 : Installer Windows Server 2022
 1. **Paramètres initiaux** :
@@ -195,7 +196,7 @@ IP fixe : 172.16.10.30/24
 6. **Installation** :
    - L’installation démarre. Attends que le processus se termine et redémarre automatiquement.
 
----
+--
 
 ## Étape 3 : Configuration initiale
 1. **Créer le mot de passe Administrateur** :
@@ -205,7 +206,7 @@ IP fixe : 172.16.10.30/24
 2. **Se connecter** :
    - Utilise le compte `Administrator` et le mot de passe défini (`Azerty1*`).
 
----
+--
 
 ## Étape 4 : Configurer une adresse IP fixe
 1. **Accéder aux paramètres réseau** :
@@ -230,7 +231,7 @@ IP fixe : 172.16.10.30/24
      Test-Connection 8.8.8.8
      ```
 
----
+--
 
 ## Étape 5 : Renommer le serveur
 1. **Changer le nom de l'ordinateur** :
@@ -238,18 +239,128 @@ IP fixe : 172.16.10.30/24
    - Clique sur **Modifier**, entre le nom `SRVWIN01` et confirme.
    - Redémarre le serveur pour appliquer le changement.
 
----
+--
 
 ## Étape 6 : Effectuer les mises à jour
 1. **Configurer Windows Update** :
    - Accède à **Paramètres** > **Mises à jour et sécurité** > **Windows Update**.
    - Recherche et installe toutes les mises à jour disponibles.
 
----
+--
 
 ## Résumé de la configuration
 - **Nom de l'ordinateur** : `SRVWIN01`
 - **Utilisateur Administrateur** : `Administrator`
 - **Mot de passe** : `Azerty1*`
 - **Adresse IP fixe** : `172.16.10.5/24`
+
+-----
+
+# Installation et Configuration d'un Serveur Debian 12
+
+## Prérequis
+- Image ISO de Debian 12 (disponible sur le site officiel : [Debian](https://www.debian.org/)).
+- Une clé USB bootable (créée avec un outil comme **Rufus**).
+- Accès au BIOS/UEFI pour configurer l'ordre de démarrage.
+
+--
+
+## Étape 1 : Préparer le support d’installation
+1. **Télécharger l’image ISO** :
+   - Télécharge l’image ISO correspondant à Debian 12, version **netinst** ou **DVD**.
+
+2. **Créer une clé USB bootable** :
+   - Utilise **Rufus** (Windows) ou la commande `dd` (Linux/MacOS) pour rendre la clé USB bootable avec l’image ISO.
+
+3. **Configurer le démarrage** :
+   - Insère la clé USB dans le serveur.
+   - Accède au BIOS/UEFI et configure le démarrage sur la clé USB.
+
+--
+
+## Étape 2 : Installation de Debian 12
+1. **Démarrer sur le support d'installation** :
+   - Sélectionne **Install** ou **Graphical Install** dans le menu de démarrage.
+
+2. **Configurer les paramètres de base** :
+   - **Langue** : Choisis la langue souhaitée (ex. Français).
+   - **Région** : Sélectionne la région correspondant à ton fuseau horaire.
+   - **Disposition clavier** : Sélectionne le type de clavier (ex. Français - AZERTY).
+
+3. **Configurer le réseau** :
+   - Lorsque demandé, configure une adresse IP manuellement :
+     - **Adresse IP** : `172.16.10.10`
+     - **Masque de sous-réseau** : `255.255.255.0`
+     - **Passerelle** : `172.16.10.1`
+     - **Serveur DNS** : `8.8.8.8`
+
+4. **Configurer le nom de l’hôte** :
+   - Nom de la machine : `SRVLX01`
+
+5. **Créer le mot de passe root** :
+   - Définit le mot de passe `root` : `Azerty1*`.
+
+6. **Partitionnement des disques** :
+   - Choisis **Guided - Use entire disk** (Utilisation guidée du disque entier).
+   - Valide le schéma proposé ou personnalise si nécessaire.
+
+7. **Installer les paquets** :
+   - Lors du choix des groupes de paquets, sélectionne :
+     - **Serveur SSH**
+     - **Utilitaires standards du système**
+
+8. **Installation du GRUB** :
+   - Installe le chargeur d’amorçage (GRUB) sur le disque principal.
+
+9. **Finalisation** :
+   - Une fois l’installation terminée, redémarre le serveur.
+
+--
+
+## Étape 3 : Configurer l’adresse IP fixe
+1. **Modifier la configuration réseau** :
+   - Ouvre le fichier de configuration Netplan :
+     ```bash
+     nano /etc/netplan/01-netcfg.yaml
+     ```
+   - Ajoute ou modifie les paramètres suivants :
+     ```yaml
+     network:
+       version: 2
+       ethernets:
+         ens33: # Remplace 'ens33' par le nom de ton interface réseau
+           dhcp4: no
+           addresses:
+             - 172.16.10.10/24
+           gateway4: 172.16.10.1
+           nameservers:
+             addresses:
+               - 8.8.8.8
+               - 8.8.4.4
+     ```
+
+2. **Appliquer la configuration** :
+   ```bash
+   sudo netplan apply
+Vérifier la connectivité réseau :
+bash
+Copier le code
+ip a
+ping -c 4 8.8.8.8
+Étape 4 : Mise à jour et configuration du système
+Mettre à jour les dépôts et le système :
+
+bash
+Copier le code
+apt update && apt upgrade -y
+Installer des utilitaires nécessaires :
+
+bash
+Copier le code
+apt install net-tools vim curl -y
+Résumé de la configuration
+Nom de l'ordinateur : SRVLX01
+Compte root : root
+Mot de passe : Azerty1*
+Adresse IP fixe : 172.16.10.10/24
 
