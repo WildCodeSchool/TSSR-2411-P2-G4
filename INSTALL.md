@@ -46,6 +46,9 @@
 
 
 
+
+-----
+
 # Installation et Configuration d'un Client Ubuntu 22.04/24.04 LTS
 
 ## Prérequis
