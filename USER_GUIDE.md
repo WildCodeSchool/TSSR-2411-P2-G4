@@ -1,3 +1,29 @@
+# Installation du paquet `dialog` sous Ubuntu et Debian obligatoire 
+
+Le paquet **`dialog`** est un utilitaire permettant de créer des interfaces utilisateur simples en mode texte dans un terminal. Il est souvent utilisé dans les scripts Bash pour des menus interactifs.
+
+## Étapes d'installation
+
+### 1. Mettre à jour la liste des paquets
+Avant d'installer un paquet, il est recommandé de mettre à jour la liste des paquets pour s'assurer d'avoir les versions les plus récentes :
+
+sudo apt update
+2. Installer le paquet dialog
+Utilisez la commande suivante pour installer dialog :
+sudo apt install dialog
+
+3. Vérifier l'installation
+Une fois l'installation terminée, vérifiez que le paquet est correctement installé en affichant sa version :
+dialog --version
+Tester dialog
+Voici un petit exemple de script pour vérifier que dialog fonctionne correctement :
+#!/bin/bash
+dialog --msgbox "Bienvenue dans Dialog ! Installation réussie." 10 30
+Enregistrez ce script dans un fichier (par exemple test_dialog.sh), rendez-le exécutable et lancez-le :
+chmod +x test_dialog.sh
+./test_dialog.sh
+Une boîte de dialogue devrait s’afficher dans le terminal avec le message "Bienvenue dans Dialog ! Installation réussie."
+
 # Mise en place du code Bash
 
 ## 1.Menu principal interractif 
