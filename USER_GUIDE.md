@@ -8,11 +8,11 @@ Le paquet **`dialog`** est un utilitaire permettant de créer des interfaces uti
 Avant d'installer un paquet, il est recommandé de mettre à jour la liste des paquets pour s'assurer d'avoir les versions les plus récentes :
 
 sudo apt update
-2. Installer le paquet dialog
+### 2. Installer le paquet dialog
 Utilisez la commande suivante pour installer dialog :
 sudo apt install dialog
 
-3. Vérifier l'installation
+### 3. Vérifier l'installation
 Une fois l'installation terminée, vérifiez que le paquet est correctement installé en affichant sa version :
 dialog --version
 Tester dialog
