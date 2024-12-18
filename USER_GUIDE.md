@@ -29,3 +29,13 @@
 
 | ![Image 11](https://github.com/WildCodeSchool/TSSR-2411-P2-G4/blob/main/screenshots/USER_GUIDE/Bash/Cr%C3%A9ation_Utilisateur.png) | ![Image 12](https://github.com/WildCodeSchool/TSSR-2411-P2-G4/blob/main/screenshots/USER_GUIDE/Bash/6_Fonction_suppression_utilisateur.PNG) |
 |-------------------------|------------------------|
+
+## 7.Fonction : Arrêt d'un ordinateur
+
+|![Image 13](https://github.com/WildCodeSchool/TSSR-2411-P2-G4/blob/main/screenshots/USER_GUIDE/Bash/7_Fonction_arreter_ordinateur.PNG) |
+|-------------------------|------------------------|
+
+## 8.Fonction : Redémarrage d'un ordinateur
+
+|![Image 13](https://github.com/WildCodeSchool/TSSR-2411-P2-G4/blob/main/screenshots/USER_GUIDE/Bash/8_Fonction_redemarrer_ordinateur.PNG) |
+|-------------------------|------------------------|
