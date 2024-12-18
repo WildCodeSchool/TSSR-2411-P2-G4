@@ -24,8 +24,8 @@ L'objectif secondaire est optionnel et permet d'améliorer l'évaluation finale 
 
 | Sprint                               | Product Owner (PO) | Scrum Master (SM) | Développeurs               | Objectifs                                                                                                                                     |
 |--------------------------------------|--------------------|-------------------|---------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------|
-| Sprint 1 : Mise en place de l'environnement | Adel              | Barbara           | Benjamin, Maxime    | - Analyse des besoins du projet; définition des rôle de chaque membre du groupe; mise en place et interconnectivité réseau des VM. ||-----------------------------------------------------------------------------------------------------------------------------------------------|
-| Sprint 2 : Création et mise en application du script Bash pour les VM Serveur Debian 12 et Client Ubuntu 22.04 | Barbara              | Adel           | Benjamin, Maxime    | - Création et mise en application du script Bash pour les VM Serveur Debian 12 et Client Ubuntu 22.04. |
+| Sprint 1  | Adel              | Barbara           | Benjamin, Maxime    | - Analyse des besoins du projet; définition des rôle de chaque membre du groupe; mise en place et interconnectivité réseau des VM. ||-----------------------------------------------------------------------------------------------------------------------------------------------|
+| Sprint 2  | Barbara              | Adel           | Benjamin, Maxime    | - Création et mise en application du script Bash pour les VM Serveur Debian 12 et Client Ubuntu 22.04. |
 
 
 ## Environnement
