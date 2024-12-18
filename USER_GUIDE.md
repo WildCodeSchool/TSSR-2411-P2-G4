@@ -36,4 +36,19 @@
 
 ## 8.Fonction : Redémarrage d'un ordinateur
 
-|![Image 13](https://github.com/WildCodeSchool/TSSR-2411-P2-G4/blob/main/screenshots/USER_GUIDE/Bash/8_Fonction_redemarrer_ordinateur.PNG)
+|![Image 14](https://github.com/WildCodeSchool/TSSR-2411-P2-G4/blob/main/screenshots/USER_GUIDE/Bash/8_Fonction_redemarrer_ordinateur.PNG)
+
+## 9.Fonction : Dernière connexion d'un utilisateur
+
+|![Image 15](https://github.com/WildCodeSchool/TSSR-2411-P2-G4/blob/main/screenshots/USER_GUIDE/Bash/9_Fonction_derniere_connexion_utilisateur.PNG)
+
+## 10.Fonction : Dernière version de l'OS d'un ordinateur
+
+|![Image 15](https://github.com/WildCodeSchool/TSSR-2411-P2-G4/blob/main/screenshots/USER_GUIDE/Bash/10_Fonction_derniere_version_os_ordinateur.PNG)
+
+## 11.Fonction : Affichage des logs
+
+| ![Image 15](https://github.com/WildCodeSchool/TSSR-2411-P2-G4/blob/main/screenshots/USER_GUIDE/Bash/Affichage_Logs.png) | ![Image 16](https://github.com/WildCodeSchool/TSSR-2411-P2-G4/blob/main/screenshots/USER_GUIDE/Bash/11_Fonction_afficher_derniers_logs.PNG) |
+|-------------------------|------------------------|
+
+
