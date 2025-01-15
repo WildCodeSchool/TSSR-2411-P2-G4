@@ -1,7 +1,7 @@
 
 # Installation d'un Client Windows 11 - CLIWIN01
 
-## 1. Installation de Windows 11
+## <span style="color:red;">1. Installation de Windows 10</span>
 
 - **Préparation de la machine** : Téléchargez l'image ISO de Windows 10 depuis le site officiel de Microsoft.
 - **Création d'un support d'installation** : Utilisez l'outil de création de média pour créer une clé USB bootable.
