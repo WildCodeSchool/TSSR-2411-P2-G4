@@ -78,3 +78,35 @@ Une boîte de dialogue devrait s’afficher dans le terminal avec le message "Bi
 |-------------------------|------------------------|
 
 
+# Mise en place du code Powershell
+
+## 1. Presentation de la connexion SSH
+
+| ![Image 21](https://github.com/WildCodeSchool/TSSR-2411-P2-G4/blob/main/screenshots/USER_GUIDE/powershell/1.Connexion_SSH.png?raw=true) | ![Image 22](https://github.com/WildCodeSchool/TSSR-2411-P2-G4/blob/main/screenshots/USER_GUIDE/powershell/SSH.PNG?raw=true) |
+|-------------------------|----------------|
+
+## 2. Menu principal interractif 
+
+| ![Image 17](https://github.com/WildCodeSchool/TSSR-2411-P2-G4/blob/main/screenshots/USER_GUIDE/powershell/2.Menu_principal.png?raw=true) | ![Image 18](https://github.com/user-attachments/assets/b660c539-a32e-419c-a57f-78783f986ccd) |
+|-------------------------|----------------|
+
+## 3. Sous Menu : actions sur les utilisateurs
+
+| ![Image 19](https://github.com/WildCodeSchool/TSSR-2411-P2-G4/blob/main/screenshots/USER_GUIDE/powershell/3.Actions_Utilisateurs.png?raw=true) | ![Image 20](https://github.com/WildCodeSchool/TSSR-2411-P2-G4/blob/main/screenshots/USER_GUIDE/powershell/G%C3%A9rer%20utilisateurs.PNG?raw=true) |
+|-------------------------|----------------|
+
+## 4. Sous Menu : actions sur les ordinateurs 
+
+| ![Image 23](https://github.com/WildCodeSchool/TSSR-2411-P2-G4/blob/main/screenshots/USER_GUIDE/powershell/4.Actions_Ordinateurs.png?raw=true) | ![Image 24](https://github.com/WildCodeSchool/TSSR-2411-P2-G4/blob/main/screenshots/USER_GUIDE/powershell/G%C3%A9rer%20ordinateur.PNG?raw=true) |
+|-------------------------|----------------|
+
+## 5. Sous Menu : action sur les logiciels
+
+| ![Image 25](https://github.com/WildCodeSchool/TSSR-2411-P2-G4/blob/main/screenshots/USER_GUIDE/powershell/5.Actions_Logiciels.png?raw=true) | ![Image 26](https://github.com/WildCodeSchool/TSSR-2411-P2-G4/blob/main/screenshots/USER_GUIDE/powershell/G%C3%A9rer%20logiciel.PNG?raw=true) |
+|-------------------------|----------------|
+
+## 6. Sous Menu : actions d'audit
+
+| ![Image 27](https://github.com/WildCodeSchool/TSSR-2411-P2-G4/blob/main/screenshots/USER_GUIDE/powershell/6.Actions_Audit.png?raw=true) | ![Image 28](https://github.com/WildCodeSchool/TSSR-2411-P2-G4/blob/main/screenshots/USER_GUIDE/powershell/Option%20d'audit.PNG?raw=true) |
+|-------------------------|----------------|
+
