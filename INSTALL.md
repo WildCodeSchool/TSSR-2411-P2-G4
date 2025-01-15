@@ -376,12 +376,13 @@ C'est le client qui doit avoir OpenSSH Server pour pouvoir accepter les connexio
 
 - Aller dans _Paramètres_ --> _Applications_ --> _Fonctionnalités facultatives_ --> _Ajouter une fonctionnalité_ --> dans la barre de recherche, écrire "serveur openssh"
 
-<P ALIGN="center"><IMG src="Captures d'écran INSTALL\Capture d'écran 2024-10-26 175746.png" width=600></P>
+![Capture d'écran 2024-10-26 175746](https://github.com/user-attachments/assets/bf095439-c4fb-4df4-80b5-7c18f4945d26)
 
 - Cocher l'application trouvée puis cliquer sur _Installer (1)_
 - Patienter quelques instants, le temps de l'installation.
+![Capture d'écran 2024-10-26 180012](https://github.com/user-attachments/assets/24d22335-be27-44a9-89c5-3666811cdec1)
 
-<P ALIGN="center"><IMG src="Captures d'écran INSTALL\Capture d'écran 2024-10-26 180012.png" width=600></P>
+
 
 2. Démarrer et Activer le Service OpenSSH
 
@@ -390,7 +391,8 @@ C'est le client qui doit avoir OpenSSH Server pour pouvoir accepter les connexio
 - Faire un clic droit
 - Cliquer sur _Démarrer_
 
-<P ALIGN="center"><IMG src="Captures d'écran INSTALL\Capture d'écran 2024-10-26 180211.png" width=600></P>
+![Capture d'écran 2024-10-26 180211](https://github.com/user-attachments/assets/2ffca41c-a164-4f6e-b4ad-9d1a854591a2)
+
 
 Pour un démarrage automatique, refaire un clic droit et choisir _Propriétés_ --> dans _Type de démarrage_, choisir _Automatique_ puis valider.
 
@@ -398,7 +400,8 @@ Pour un démarrage automatique, refaire un clic droit et choisir _Propriétés_ 
 
 Vérifier que OpenSSH Client est bien installé sur votre machine Windows Server avec cette commande. Vous devriez avoir ce résultat :
 
-<P ALIGN="center"><IMG src="Captures d'écran INSTALL\Capture d'écran 2024-10-26 161114.png" width=600></P>
+![Capture d'écran 2024-10-26 161114](https://github.com/user-attachments/assets/1f0274f1-58bb-45ba-891a-2decb2956f8c)
+
 
 S'il n'est pas installé, il est possible de procéder à l'installation.
 Entrez cette commande dans PowerShell :
@@ -424,7 +427,8 @@ notepad C:\ProgramData\ssh\sshd_config
 
 3. Assurez-vous que les lignes suivantes sont présentes et non commentées (elles ne doivent pas commencer par #) :
 
-<P ALIGN="center"><IMG src="Captures d'écran INSTALL\Capture d'écran 2024-10-26 172347.png" width=600></P>
+![Capture d'écran 2024-10-26 172347](https://github.com/user-attachments/assets/a795e9e8-c33e-48c7-a64b-10954468f0c1)
+
 
 4. Enregistrer le fichier, puis redémarre le service pour appliquer les changements :
 
@@ -434,7 +438,7 @@ Restart-Service sshd
 
 5. Ajouter une règle de pare-feu pour permettre les connexions SSH, rentrer la commande suivante :
 
-<P ALIGN="center"><IMG src="Captures d'écran INSTALL\Capture d'écran 2024-10-26 182505.png" width=600></P>
+![Capture d'écran 2024-10-26 182505](https://github.com/user-attachments/assets/e851fde0-17da-4c0e-b25d-2af8b289655f)
 
 6. Sur le serveur, lancer le script :
 
