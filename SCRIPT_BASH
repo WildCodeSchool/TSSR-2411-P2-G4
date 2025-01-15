@@ -1,0 +1,515 @@
+#!/bin/bash
+
+# Variables globales pour journalisation
+LOG_FILE="/var/log/script_menu.log"
+DEFAULT_IP="172.16.10.30"  # Remplacer par l'IP de votre choix (si fixe)
+
+# Fonction de journalisation
+log_action() {
+    echo "$(date '+%Y-%m-%d %H:%M:%S') | $1" >> $LOG_FILE
+}
+
+# Fonction de connexion SSH
+ssh_connect() {
+    ip_address=$1
+    ssh root@$ip_address "$2"
+    return $?
+}
+
+# Liste dynamique des applications sur le PC distant
+recuperer_liste_applications() {
+    ssh_connect $DEFAULT_IP "ls /usr/lib/systemd/system/ | grep .service | sed 's/.service//g'"
+}
+
+# Menu principal interactif
+afficher_menu_principal() {
+    while true; do
+        choix_principal=$(dialog --clear --backtitle "Menu Principal" \
+            --title "Menu Principal" \
+            --menu "Choisissez une option :" 15 50 5 \
+            1 "Actions sur les utilisateurs" \
+            2 "Actions sur les ordinateurs" \
+            3 "Option d'audit éthique" \
+            4 "Quitter" 3>&1 1>&2 2>&3)
+
+        case $choix_principal in
+            1) menu_utilisateurs ;;
+            2) menu_ordinateurs ;;
+            3) menu_recherche ;;
+            4) clear; echo "Au revoir !"; exit 0 ;;
+            *) clear; echo "Option invalide."; sleep 2 ;;
+        esac
+    done
+}
+
+
+
+# Sous-menu : Actions sur les utilisateurs (modifié)
+menu_utilisateurs() {
+    choix_utilisateur=$(dialog --clear --backtitle "Actions sur les utilisateurs" \
+        --title "Actions sur les utilisateurs" \
+        --menu "Choisissez une option :" 15 50 8 \
+        1 "Créer un compte utilisateur" \
+        2 "Supprimer un compte utilisateur" \
+        3 "Modifier le mot de passe d'un utilisateur" \
+        4 "Lister les groupes" \
+        5 "Créer un groupe" \
+        6 "Supprimer un groupe" \
+        7 "Ajouter un utilisateur à un groupe" \
+        8 "Supprimer un utilisateur d'un groupe" \
+        9 "Retour au menu principal" 3>&1 1>&2 2>&3)
+
+    case $choix_utilisateur in
+        1) creer_utilisateur ;;
+        2) supprimer_utilisateur ;;
+        3) modifier_mot_de_passe ;;
+        4) lister_groupes ;;
+        5) creer_groupe ;;
+        6) supprimer_groupe ;;
+        7) ajouter_utilisateur_groupe ;;
+        8) supprimer_utilisateur_groupe ;;
+        9) afficher_menu_principal ;;
+        *) clear; echo "Option invalide."; sleep 2; menu_utilisateurs ;;
+    esac
+}
+
+# Fonction : Création d'un utilisateur (reste inchangé)
+creer_utilisateur() {
+    username=$(dialog --inputbox "Entrez le nom d'utilisateur à créer :" 10 50 3>&1 1>&2 2>&3)
+    if [ -z "$username" ]; then
+        dialog --msgbox "Nom d'utilisateur non fourni." 10 50
+        menu_utilisateurs
+        return
+    fi
+
+    if ssh_connect $DEFAULT_IP "sudo adduser $username"; then
+        log_action "Utilisateur $username créé avec succès sur $DEFAULT_IP."
+        dialog --msgbox "Utilisateur $username créé avec succès sur $DEFAULT_IP." 10 50
+    else
+        log_action "Échec de la création de l'utilisateur $username sur $DEFAULT_IP."
+        dialog --msgbox "Erreur lors de la création de l'utilisateur sur $DEFAULT_IP." 10 50
+    fi
+
+    menu_utilisateurs
+}
+
+# Fonction : Suppression d'un utilisateur (reste inchangé)
+supprimer_utilisateur() {
+    username=$(dialog --inputbox "Entrez le nom d'utilisateur à supprimer :" 10 50 3>&1 1>&2 2>&3)
+    if [ -z "$username" ]; then
+        dialog --msgbox "Nom d'utilisateur non fourni." 10 50
+        menu_utilisateurs
+        return
+    fi
+
+    if ssh_connect $DEFAULT_IP "sudo deluser $username"; then
+        log_action "Utilisateur $username supprimé avec succès sur $DEFAULT_IP."
+        dialog --msgbox "Utilisateur $username supprimé avec succès sur $DEFAULT_IP." 10 50
+    else
+        log_action "Échec de la suppression de l'utilisateur $username sur $DEFAULT_IP."
+        dialog --msgbox "Erreur lors de la suppression de l'utilisateur sur $DEFAULT_IP." 10 50
+    fi
+
+    menu_utilisateurs
+}
+
+# Fonction : Modifier le mot de passe d'un utilisateur
+modifier_mot_de_passe() {
+    username=$(dialog --inputbox "Entrez le nom d'utilisateur :" 10 50 3>&1 1>&2 2>&3)
+    if [ -z "$username" ]; then
+        dialog --msgbox "Nom d'utilisateur non fourni." 10 50
+        menu_utilisateurs
+        return
+    fi
+
+    password=$(dialog --passwordbox "Entrez le nouveau mot de passe :" 10 50 3>&1 1>&2 2>&3)
+    if [ -z "$password" ]; then
+        dialog --msgbox "Mot de passe non fourni." 10 50
+        menu_utilisateurs
+        return
+    fi
+
+    if ssh_connect $DEFAULT_IP "echo '$username:$password' | sudo chpasswd"; then
+        log_action "Mot de passe de l'utilisateur $username modifié avec succès sur $DEFAULT_IP."
+        dialog --msgbox "Mot de passe de l'utilisateur $username modifié avec succès sur $DEFAULT_IP." 10 50
+    else
+        log_action "Échec de la modification du mot de passe de l'utilisateur $username sur $DEFAULT_IP."
+        dialog --msgbox "Erreur lors de la modification du mot de passe sur $DEFAULT_IP." 10 50
+    fi
+
+    menu_utilisateurs
+}
+
+# Fonction : Lister les groupes
+lister_groupes() {
+    groupes=$(ssh_connect $DEFAULT_IP "cut -d: -f1 /etc/group")
+    log_action "Consultation de la liste des groupes sur $DEFAULT_IP."
+    echo "$groupes" > /tmp/groupes.txt
+    dialog --textbox /tmp/groupes.txt 20 70
+    menu_utilisateurs
+}
+
+# Fonction : Créer un groupe
+creer_groupe() {
+    groupname=$(dialog --inputbox "Entrez le nom du groupe à créer :" 10 50 3>&1 1>&2 2>&3)
+    if [ -z "$groupname" ]; then
+        dialog --msgbox "Nom du groupe non fourni." 10 50
+        menu_utilisateurs
+        return
+    fi
+
+    if ssh_connect $DEFAULT_IP "sudo groupadd $groupname"; then
+        log_action "Groupe $groupname créé avec succès sur $DEFAULT_IP."
+        dialog --msgbox "Groupe $groupname créé avec succès sur $DEFAULT_IP." 10 50
+    else
+        log_action "Échec de la création du groupe $groupname sur $DEFAULT_IP."
+        dialog --msgbox "Erreur lors de la création du groupe sur $DEFAULT_IP." 10 50
+    fi
+
+    menu_utilisateurs
+}
+
+# Fonction : Supprimer un groupe
+supprimer_groupe() {
+    groupname=$(dialog --inputbox "Entrez le nom du groupe à supprimer :" 10 50 3>&1 1>&2 2>&3)
+    if [ -z "$groupname" ]; then
+        dialog --msgbox "Nom du groupe non fourni." 10 50
+        menu_utilisateurs
+        return
+    fi
+
+    if ssh_connect $DEFAULT_IP "sudo groupdel $groupname"; then
+        log_action "Groupe $groupname supprimé avec succès sur $DEFAULT_IP."
+        dialog --msgbox "Groupe $groupname supprimé avec succès sur $DEFAULT_IP." 10 50
+    else
+        log_action "Échec de la suppression du groupe $groupname sur $DEFAULT_IP."
+        dialog --msgbox "Erreur lors de la suppression du groupe sur $DEFAULT_IP." 10 50
+    fi
+
+    menu_utilisateurs
+}
+
+# Fonction : Ajouter un utilisateur à un groupe
+ajouter_utilisateur_groupe() {
+    username=$(dialog --inputbox "Entrez le nom d'utilisateur :" 10 50 3>&1 1>&2 2>&3)
+    if [ -z "$username" ]; then
+        dialog --msgbox "Nom d'utilisateur non fourni." 10 50
+        menu_utilisateurs
+        return
+    fi
+
+    groupname=$(dialog --inputbox "Entrez le nom du groupe :" 10 50 3>&1 1>&2 2>&3)
+    if [ -z "$groupname" ]; then
+        dialog --msgbox "Nom du groupe non fourni." 10 50
+        menu_utilisateurs
+        return
+    fi
+
+    if ssh_connect $DEFAULT_IP "sudo usermod -aG $groupname $username"; then
+        log_action "Utilisateur $username ajouté au groupe $groupname sur $DEFAULT_IP."
+        dialog --msgbox "Utilisateur $username ajouté au groupe $groupname avec succès sur $DEFAULT_IP." 10 50
+    else
+        log_action "Échec de l'ajout de l'utilisateur $username au groupe $groupname sur $DEFAULT_IP."
+        dialog --msgbox "Erreur lors de l'ajout de l'utilisateur au groupe sur $DEFAULT_IP." 10 50
+    fi
+
+    menu_utilisateurs
+}
+
+# Fonction : Supprimer un utilisateur d'un groupe
+supprimer_utilisateur_groupe() {
+    username=$(dialog --inputbox "Entrez le nom d'utilisateur :" 10 50 3>&1 1>&2 2>&3)
+    if [ -z "$username" ]; then
+        dialog --msgbox "Nom d'utilisateur non fourni." 10 50
+        menu_utilisateurs
+        return
+    fi
+
+    groupname=$(dialog --inputbox "Entrez le nom du groupe :" 10 50 3>&1 1>&2 2>&3)
+    if [ -z "$groupname" ]; then
+        dialog --msgbox "Nom du groupe non fourni." 10 50
+        menu_utilisateurs
+        return
+    fi
+
+    if ssh_connect $DEFAULT_IP "sudo gpasswd -d $username $groupname"; then
+        log_action "Utilisateur $username supprimé du groupe $groupname sur $DEFAULT_IP."
+        dialog --msgbox "Utilisateur $username supprimé du groupe $groupname avec succès sur $DEFAULT_IP." 10 50
+    else
+        log_action "Échec de la suppression de l'utilisateur $username du groupe $groupname sur $DEFAULT_IP."
+        dialog --msgbox "Erreur lors de la suppression de l'utilisateur du groupe sur $DEFAULT_IP." 10 50
+    fi
+
+    menu_utilisateurs
+}
+
+# Sous-menu : Actions sur les ordinateurs
+menu_ordinateurs() {
+    choix_ordinateur=$(dialog --clear --backtitle "Actions sur les ordinateurs" \
+        --title "Actions sur les ordinateurs" \
+        --menu "Choisissez une option :" 15 50 8 \
+        1 "Arrêter un ordinateur" \
+        2 "Redémarrer un ordinateur" \
+        3 "Déconnecter un utilisateur" \
+        4 "Mettre en veille un ordinateur" \
+        5 "Lister les services" \
+        6 "Retour au menu principal" 3>&1 1>&2 2>&3)
+
+    case $choix_ordinateur in
+        1) arreter_ordinateur ;;
+        2) redemarrer_ordinateur ;;
+        3) deconnecter_utilisateur ;;
+        4) mettre_en_veille ;;
+        5) lister_services ;;
+        6) afficher_menu_principal ;;
+        *) clear; echo "Option invalide."; sleep 2; menu_ordinateurs ;;
+    esac
+}
+
+# Fonction : Arrêter un ordinateur
+arreter_ordinateur() {
+    if ssh_connect $DEFAULT_IP "shutdown now"; then
+        log_action "Arrêt de l'ordinateur $DEFAULT_IP."
+        dialog --msgbox "Ordinateur $DEFAULT_IP arrêté avec succès." 10 50
+    else
+        log_action "Échec de l'arrêt de l'ordinateur $DEFAULT_IP."
+        dialog --msgbox "Erreur lors de l'arrêt de l'ordinateur." 10 50
+    fi
+    menu_ordinateurs
+}
+
+# Fonction : Redémarrer un ordinateur
+redemarrer_ordinateur() {
+    if ssh_connect $DEFAULT_IP "reboot"; then
+        log_action "Redémarrage de l'ordinateur $DEFAULT_IP."
+        dialog --msgbox "Ordinateur $DEFAULT_IP redémarré avec succès." 10 50
+    else
+        log_action "Échec du redémarrage de l'ordinateur $DEFAULT_IP."
+        dialog --msgbox "Erreur lors du redémarrage de l'ordinateur." 10 50
+    fi
+    menu_ordinateurs
+}
+
+# Fonction : Déconnecter un utilisateur
+deconnecter_utilisateur() {
+    username=$(dialog --inputbox "Entrez le nom d'utilisateur à déconnecter :" 10 50 3>&1 1>&2 2>&3)
+    if [ -z "$username" ]; then
+        dialog --msgbox "Nom d'utilisateur non fourni." 10 50
+        menu_ordinateurs
+        return
+    fi
+
+    if ssh_connect $DEFAULT_IP "pkill -KILL -u $username"; then
+        log_action "Utilisateur $username déconnecté avec succès sur $DEFAULT_IP."
+        dialog --msgbox "Utilisateur $username déconnecté avec succès sur $DEFAULT_IP." 10 50
+    else
+        log_action "Échec de la déconnexion de l'utilisateur $username sur $DEFAULT_IP."
+        dialog --msgbox "Erreur lors de la déconnexion de l'utilisateur sur $DEFAULT_IP." 10 50
+    fi
+    menu_ordinateurs
+}
+
+# Fonction : Mettre en veille un ordinateur
+mettre_en_veille() {
+    if ssh_connect $DEFAULT_IP "systemctl suspend"; then
+        log_action "Mise en veille de l'ordinateur $DEFAULT_IP."
+        dialog --msgbox "Ordinateur $DEFAULT_IP mis en veille avec succès." 10 50
+    else
+        log_action "Échec de la mise en veille de l'ordinateur $DEFAULT_IP."
+        dialog --msgbox "Erreur lors de la mise en veille de l'ordinateur." 10 50
+    fi
+    menu_ordinateurs
+}
+
+# Fonction : Lister les services
+lister_services() {
+    services=$(ssh_connect $DEFAULT_IP "systemctl list-units --type=service --all")
+    log_action "Consultation de la liste des services sur $DEFAULT_IP."
+    echo "$services" > /tmp/services.txt
+    dialog --textbox /tmp/services.txt 20 70
+    menu_ordinateurs
+}
+
+
+
+# Ajout de l'option de scan de port dans le menu de recherche
+menu_recherche() {
+    choix_recherche=$(dialog --clear --backtitle "Option d'audit éthique" \
+        --title "Option d'audit éthique" \
+        --menu "Choisissez une option :" 15 50 15 \
+        1 "Date de dernière connexion d'un utilisateur" \
+        2 "Version de l'OS d'un ordinateur" \
+        3 "Afficher les derniers logs" \
+        4 "Vérifier l'utilisation du disque" \
+        5 "Vérifier l'utilisation de la mémoire" \
+        6 "Scanner les ports ouverts" \
+        7 "Vulnérabilités avec Lynis" \
+        8 "Failles de sécurité avec OpenVAS" \
+        9 "Audit DNS avec Dig" \
+        10 "Retour au menu principal" 3>&1 1>&2 2>&3)
+
+    case $choix_recherche in
+        1) derniere_connexion_utilisateur ;;
+        2) version_os_ordinateur ;;
+        3) afficher_logs_recents ;;
+        4) verifier_utilisation_disque ;;
+        5) verifier_utilisation_memoire ;;
+        6) scanner_ports ;;
+        7) verifier_vulnerabilites_lynis ;;
+        8) verifier_failles_openvas ;;
+        9) audit_dns_dig ;;
+        10) afficher_menu_principal ;;
+        *) clear; echo "Option invalide."; sleep 2; menu_recherche ;;
+    esac
+}
+
+
+# Fonction : Audit DNS avec Dig
+audit_dns_dig() {
+    domain=$(dialog --inputbox "Entrez le nom de domaine à auditer avec Dig :" 10 50 3>&1 1>&2 2>&3)
+    if [ -z "$domain" ]; then
+        dialog --msgbox "Nom de domaine non fourni." 10 50
+        menu_recherche
+        return
+    fi
+
+    # Vérifier si Dig est installé, sinon l'installer
+    ssh_connect $DEFAULT_IP "command -v dig >/dev/null 2>&1 || sudo apt-get install -y dnsutils"
+
+    result=$(ssh_connect $DEFAULT_IP "dig $domain")
+    log_action "Audit DNS avec Dig sur le domaine $domain depuis $DEFAULT_IP."
+    echo "$result" > /tmp/dig_result.txt
+    dialog --textbox /tmp/dig_result.txt 20 70
+    menu_recherche
+}
+
+# Fonction : Vérifier les vulnérabilités avec Lynis
+verifier_vulnerabilites_lynis() {
+    ip_address=$(dialog --inputbox "Entrez l'adresse IP à auditer avec Lynis :" 10 50 3>&1 1>&2 2>&3)
+    if [ -z "$ip_address" ]; then
+        dialog --msgbox "Adresse IP non fournie." 10 50
+        menu_recherche
+        return
+    fi
+
+    # Vérifier si Lynis est installé, sinon l'installer
+    ssh_connect $ip_address "command -v lynis >/dev/null 2>&1 || sudo apt-get install -y lynis"
+   
+    result=$(ssh_connect $ip_address "sudo lynis audit system")
+    log_action "Audit de vulnérabilités avec Lynis sur $ip_address."
+    echo "$result" > /tmp/lynis_result.txt
+    dialog --textbox /tmp/lynis_result.txt 20 70
+    menu_recherche
+}
+
+# Fonction : Vérifier les failles de sécurité avec OpenVAS
+verifier_failles_openvas() {
+    ip_address=$(dialog --inputbox "Entrez l'adresse IP à auditer avec OpenVAS :" 10 50 3>&1 1>&2 2>&3)
+    if [ -z "$ip_address" ]; then
+        dialog --msgbox "Adresse IP non fournie." 10 50
+        menu_recherche
+        return
+    fi
+
+    result=$(ssh_connect $ip_address "sudo openvas -s")
+    log_action "Vérification des failles de sécurité avec OpenVAS sur $ip_address."
+    echo "$result" > /tmp/openvas_result.txt
+    dialog --textbox /tmp/openvas_result.txt 20 70
+    menu_recherche
+}
+
+# Fonction : Date de dernière connexion d'un utilisateur
+derniere_connexion_utilisateur() {
+    username=$(dialog --inputbox "Entrez le nom d'utilisateur :" 10 50 3>&1 1>&2 2>&3)
+    if [ -z "$username" ]; then
+        dialog --msgbox "Nom d'utilisateur non fourni." 10 50
+        menu_recherche
+        return
+    fi
+
+    last_login=$(ssh_connect $DEFAULT_IP "lastlog -u $username | tail -n 1")
+    if [ -z "$last_login" ]; then
+        dialog --msgbox "Impossible de récupérer les informations de connexion pour $username." 10 50
+    else
+        log_action "Consultation de la dernière connexion de l'utilisateur $username sur $DEFAULT_IP."
+        dialog --msgbox "Dernière connexion de $username : $last_login" 10 50
+    fi
+
+    menu_recherche
+}
+
+# Fonction : Version de l'OS d'un ordinateur
+version_os_ordinateur() {
+    os_version=$(ssh_connect $DEFAULT_IP "cat /etc/os-release | grep PRETTY_NAME")
+    log_action "Consultation de la version de l'OS de l'ordinateur $DEFAULT_IP."
+    dialog --msgbox "Version de l'OS : $os_version" 10 50
+    menu_recherche
+}
+
+# Fonction : Afficher les derniers logs (locaux)
+afficher_logs_recents() {
+    if [ -f "$LOG_FILE" ];then
+        # Récupérer les 10 derniers logs locaux
+        derniers_logs=$(tail -n 20 "$LOG_FILE")
+
+        if [ -z "$derniers_logs" ];then
+            dialog --msgbox "Aucun log à afficher." 10 50
+        else
+            # Afficher les logs dans un tableau avec dialog
+            dialog --clear --title "Derniers Logs" --msgbox "$derniers_logs" 20 70
+        fi
+    else
+        dialog --msgbox "Fichier de journalisation non trouvé : $LOG_FILE" 10 50
+    fi
+
+    menu_recherche
+}
+
+# Fonction : Vérifier l'utilisation du disque
+verifier_utilisation_disque() {
+    utilisation_disque=$(ssh_connect $DEFAULT_IP "df -h")
+    log_action "Consultation de l'utilisation du disque sur $DEFAULT_IP."
+    echo "$utilisation_disque" > /tmp/utilisation_disque.txt
+    dialog --textbox /tmp/utilisation_disque.txt 20 70
+    menu_recherche
+}
+
+# Fonction : Vérifier l'utilisation de la mémoire
+verifier_utilisation_memoire() {
+    utilisation_memoire=$(ssh_connect $DEFAULT_IP "free -h")
+    log_action "Consultation de l'utilisation de la mémoire sur $DEFAULT_IP."
+    echo "$utilisation_memoire" > /tmp/utilisation_memoire.txt
+    dialog --textbox /tmp/utilisation_memoire.txt 20 70
+    menu_recherche
+}
+
+# Fonction : Scanner les ports ouverts sur un ordinateur
+scanner_ports() {
+    ip_address=$(dialog --inputbox "Entrez l'adresse IP à scanner :" 10 50 3>&1 1>&2 2>&3)
+    if [ -z "$ip_address" ];then
+        dialog --msgbox "Adresse IP non fournie." 10 50
+        menu_recherche
+        return
+    fi
+
+    scan_result=$(ssh_connect $DEFAULT_IP "nmap -p- $ip_address")
+    log_action "Scan de tous les ports sur $ip_address depuis $DEFAULT_IP."
+
+    # Analyser les résultats et ajouter des couleurs
+    formatted_result=$(echo "$scan_result" | awk '
+    /open/ {print "\033[32m" $0 "\033[0m"}
+    /closed/ {print "\033[31m" $0 "\033[0m"}
+    !/open|closed/ {print $0}')
+
+    echo -e "$formatted_result" > /tmp/scan_result.txt
+    dialog --textbox /tmp/scan_result.txt 20 70
+    menu_recherche
+}
+
+
+
+# Lancer le script
+afficher_menu_principal
+
+# Nettoyer le fichier temporaire DIALOGRC
+rm -f $DIALOGRC
