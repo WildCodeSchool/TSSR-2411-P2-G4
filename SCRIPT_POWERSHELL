@@ -1,0 +1,461 @@
+# Import the Posh-SSH module
+Import-Module Posh-SSH
+
+Add-Type -AssemblyName System.Windows.Forms
+Add-Type -AssemblyName System.Drawing
+
+# Définir l'encodage de sortie à UTF-8
+$OutputEncoding = [System.Text.Encoding]::UTF8
+
+# Variables globales
+$global:logFile = "$PSScriptRoot\log_evt.log"
+$global:Cible = "172.16.10.20"
+$global:Utilisateur = "wilder"
+$global:Password = "Azerty1*"
+$global:Credential = New-Object System.Management.Automation.PSCredential($global:Utilisateur, $global:Password)
+
+# Changer la couleur de fond et de texte de la console
+$Host.UI.RawUI.BackgroundColor = "Black"
+$Host.UI.RawUI.ForegroundColor = "Green"
+Clear-Host
+
+# Afficher la variable $global:Cible
+Write-Host "La cible actuelle est : $global:Cible"
+
+
+# Fonction pour journaliser les événements
+function Journaliser_Evenement {
+    param ([string]$Evenement)
+    $dateActuelle = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
+    $entreeJournal = "$dateActuelle - $env:USERNAME - $Evenement"
+    Add-Content -Path $global:logFile -Value $entreeJournal
+}
+
+
+# Demander le mot de passe de l'utilisateur
+$password = Read-Host -AsSecureString "========================================`nEntrez le mot de passe du client $username "
+
+#Créer un objet PSCredential
+$credential=New-Object System.Management.Automation.PSCredential($global:Utilisateur, $password)
+
+# Créer une session SSH
+try {
+    Write-Host "Tentative de connexion SSH à $global:Cible..."
+    $session = New-SSHSession -ComputerName $global:Cible -Credential $credential -ConnectionTimeout 5 -ErrorAction SilentlyContinue
+    if ($session) {
+      Write-Host "[Succès] Connexion réussie !" -ForegroundColor Green
+    } else {
+      throw "$global:Cible"
+    }
+} catch {
+    Write-Host "[Erreur] Echec de la connexion à : $_" -ForegroundColor Red
+    exit 1
+}
+
+# Fonction pour exécuter une commande via SSH
+function Executer_CommandeSSH {
+    param ([string]$Commande)
+    try {
+        $result = Invoke-SSHCommand -SessionId $session.SessionId -Command $Commande
+        return $result.Output
+    } catch {
+        Write-Host "Erreur lors de l'exécution de la commande SSH : $_"
+        return $null
+    }
+}
+
+# Fonction pour ajouter un bouton à un formulaire
+function Add-Button {
+    param (
+        [string]$text,
+        [System.Drawing.Point]$location,
+        [scriptblock]$clickAction,
+        [System.Windows.Forms.Form]$form
+    )
+    $button = New-Object System.Windows.Forms.Button
+    $button.Text = $text
+    $button.Size = New-Object System.Drawing.Size(150, 50)
+    $button.Location = $location
+    $button.BackColor = [System.Drawing.Color]::Black
+    $button.ForeColor = [System.Drawing.Color]::Green
+    $button.FlatStyle = [System.Windows.Forms.FlatStyle]::Flat
+    $button.FlatAppearance.BorderColor = [System.Drawing.Color]::Green
+    $button.Add_Click($clickAction)
+    $form.Controls.Add($button)
+}
+
+# Fonction pour créer un formulaire générique
+function Creer_Formulaire {
+    param (
+        [string]$titre,
+        [string]$labelText,
+        [System.Windows.Forms.ListBox]$listBox
+    )
+    $form = New-Object System.Windows.Forms.Form
+    $form.Text = $titre
+    $form.Size = New-Object System.Drawing.Size(600, 700)
+    $form.StartPosition = "CenterScreen"
+    $form.BackColor = [System.Drawing.Color]::Black
+
+    $label = New-Object System.Windows.Forms.Label
+    $label.Text = $labelText
+    $label.Font = New-Object System.Drawing.Font("Arial", 12, [System.Drawing.FontStyle]::Bold)
+    $label.ForeColor = [System.Drawing.Color]::Green
+    $label.AutoSize = $true
+    $label.Location = New-Object System.Drawing.Point(200, 20)
+    $form.Controls.Add($label)
+
+    $listBox.Size = New-Object System.Drawing.Size(500, 300)
+    $listBox.Location = New-Object System.Drawing.Point(40, 270)
+    $listBox.BackColor = [System.Drawing.Color]::Black
+    $listBox.ForeColor = [System.Drawing.Color]::Green
+    $form.Controls.Add($listBox)
+
+    return $form
+}
+
+# Fonction pour afficher le menu principal
+function Afficher_Menu {
+    $form = New-Object System.Windows.Forms.Form
+    $form.Text = "Menu Principal"
+    $form.Size = New-Object System.Drawing.Size(600, 700)
+    $form.StartPosition = "CenterScreen"
+    $form.BackColor = [System.Drawing.Color]::Black
+
+    $label = New-Object System.Windows.Forms.Label
+    $label.Text = "Menu Principal"
+    $label.Font = New-Object System.Drawing.Font("Arial", 14, [System.Drawing.FontStyle]::Bold)
+    $label.ForeColor = [System.Drawing.Color]::Green
+    $label.AutoSize = $true
+    $label.Location = New-Object System.Drawing.Point(200, 20)
+    $form.Controls.Add($label)
+
+    Add-Button "Gérer les utilisateurs" (New-Object System.Drawing.Point(50, 70)) { Gerer_Utilisateurs } $form
+    Add-Button "Gérer les ordinateurs" (New-Object System.Drawing.Point(210, 70)) { Gerer_Ordinateurs } $form
+    Add-Button "Options d'audit" (New-Object System.Drawing.Point(370, 70)) { Options_Audit } $form
+    Add-Button "Quitter" (New-Object System.Drawing.Point(210, 130)) { $form.Close() } $form
+
+    $form.ShowDialog()
+}
+
+# Fonction pour gérer les utilisateurs
+function Gerer_Utilisateurs {
+    $listBox = New-Object System.Windows.Forms.ListBox
+    $form = Creer_Formulaire "Gérer les utilisateurs" "Actions utilisateur" $listBox
+
+    Add-Button "Créer un utilisateur" (New-Object System.Drawing.Point(50, 70)) {
+        $nouvelUtilisateur = Read-Host "Entrez le nom du nouvel utilisateur"
+        $motDePasse = Read-Host "Entrez le mot de passe du nouvel utilisateur"
+        $commande = "net user $nouvelUtilisateur $motDePasse /add"
+        try {
+            $result = Executer_CommandeSSH -Commande $commande
+            if ($result) {
+                $listBox.Items.Add("Utilisateur $nouvelUtilisateur créé avec succès.")
+                Journaliser_Evenement "Utilisateur $nouvelUtilisateur créé"
+            }
+        } catch {
+            $listBox.Items.Add("Erreur : Impossible de créer l'utilisateur $nouvelUtilisateur.")
+            Journaliser_Evenement "Erreur : Création de l'utilisateur $nouvelUtilisateur échouée"
+        }
+    } $form
+
+    Add-Button "Supprimer un utilisateur" (New-Object System.Drawing.Point(210, 70)) {
+        $utilisateurASupprimer = Read-Host "Entrez le nom de l'utilisateur à supprimer"
+        $commande = "net user $utilisateurASupprimer /delete"
+        try {
+            $result = Executer_CommandeSSH -Commande $commande
+            if ($result) {
+                $listBox.Items.Add("Utilisateur $utilisateurASupprimer supprimé avec succès.")
+                Journaliser_Evenement "Utilisateur $utilisateurASupprimer supprimé"
+            }
+        } catch {
+            $listBox.Items.Add("Erreur : Impossible de supprimer l'utilisateur $utilisateurASupprimer.")
+            Journaliser_Evenement "Erreur : Suppression de l'utilisateur $utilisateurASupprimer échouée"
+        }
+    } $form
+
+    Add-Button "Modifier un mot de passe" (New-Object System.Drawing.Point(370, 70)) {
+        $utilisateur = Read-Host "Entrez le nom de l'utilisateur"
+        $nouveauMotDePasse = Read-Host "Entrez le nouveau mot de passe"
+        $commande = "net user $utilisateur $nouveauMotDePasse"
+        try {
+            $result = Executer_CommandeSSH -Commande $commande
+            if ($result) {
+                $listBox.Items.Add("Mot de passe de l'utilisateur $utilisateur modifié avec succès.")
+                Journaliser_Evenement "Mot de passe de l'utilisateur $utilisateur modifié"
+            }
+        } catch {
+            $listBox.Items.Add("Erreur : Impossible de modifier le mot de passe de l'utilisateur $utilisateur.")
+            Journaliser_Evenement "Erreur : Modification du mot de passe de l'utilisateur $utilisateur échouée"
+        }
+    } $form
+
+    Add-Button "Lister les groupes" (New-Object System.Drawing.Point(50, 190)) {
+        try {
+            $result = Executer_CommandeSSH -Commande "net localgroup"
+            $listBox.Items.Add("Groupes locaux sur $global:Cible:")
+            $listBox.Items.AddRange($result -split "`n")
+            Journaliser_Evenement "Liste des groupes locaux récupérée"
+        } catch {
+            $listBox.Items.Add("Erreur lors de la récupération des groupes locaux")
+            Journaliser_Evenement "Erreur : Liste des groupes locaux non récupérée"
+        }
+    } $form
+
+    Add-Button "Créer un groupe" (New-Object System.Drawing.Point(370, 130)) {
+        $nouveauGroupe = Read-Host "Entrez le nom du nouveau groupe"
+        $commande = "net localgroup $nouveauGroupe /add"
+        try {
+            $result = Executer_CommandeSSH -Commande $commande
+            if ($result) {
+                $listBox.Items.Add("Groupe $nouveauGroupe créé avec succès.")
+                Journaliser_Evenement "Groupe $nouveauGroupe créé"
+            }
+        } catch {
+            $listBox.Items.Add("Erreur : Impossible de créer le groupe $nouveauGroupe.")
+            Journaliser_Evenement "Erreur : Création du groupe $nouveauGroupe échouée"
+        }
+    } $form
+
+    Add-Button "Supprimer un groupe" (New-Object System.Drawing.Point(210, 190)) {
+        $groupeASupprimer = Read-Host "Entrez le nom du groupe à supprimer"
+        $commande = "net localgroup $groupeASupprimer /delete"
+        try {
+            $result = Executer_CommandeSSH -Commande $commande
+            if ($result) {
+                $listBox.Items.Add("Groupe $groupeASupprimer supprimé avec succès.")
+                Journaliser_Evenement "Groupe $groupeASupprimer supprimé"
+            }
+        } catch {
+            $listBox.Items.Add("Erreur : Impossible de supprimer le groupe $groupeASupprimer.")
+            Journaliser_Evenement "Erreur : Suppression du groupe $groupeASupprimer échouée"
+        }
+    } $form
+
+    Add-Button "Ajouter un utilisateur à un groupe" (New-Object System.Drawing.Point(50, 130)) {
+        $utilisateur = Read-Host "Entrez le nom de l'utilisateur"
+        $groupe = Read-Host "Entrez le nom du groupe"
+        $commande = "net localgroup $groupe $utilisateur /add"
+        try {
+            $result = Executer_CommandeSSH -Commande $commande
+            if ($result) {
+                $listBox.Items.Add("Utilisateur $utilisateur ajouté au groupe $groupe avec succès.")
+                Journaliser_Evenement "Utilisateur $utilisateur ajouté au groupe $groupe"
+            }
+        } catch {
+            $listBox.Items.Add("Erreur : Impossible d'ajouter l'utilisateur $utilisateur au groupe $groupe.")
+            Journaliser_Evenement "Erreur : Ajout de l'utilisateur $utilisateur au groupe $groupe échoué"
+        }
+    } $form
+
+    Add-Button "Supprimer un utilisateur d'un groupe" (New-Object System.Drawing.Point(210, 130)) {
+        $utilisateur = Read-Host "Entrez le nom de l'utilisateur"
+        $groupe = Read-Host "Entrez le nom du groupe"
+        $commande = "net localgroup $groupe $utilisateur /delete"
+        try {
+            $result = Executer_CommandeSSH -Commande $commande
+            if ($result) {
+                $listBox.Items.Add("Utilisateur $utilisateur supprimé du groupe $groupe avec succès.")
+                Journaliser_Evenement "Utilisateur $utilisateur supprimé du groupe $groupe"
+            }
+        } catch {
+            $listBox.Items.Add("Erreur : Impossible de supprimer l'utilisateur $utilisateur du groupe $groupe.")
+            Journaliser_Evenement "Erreur : Suppression de l'utilisateur $utilisateur du groupe $groupe échouée"
+        }
+    } $form
+
+    $form.ShowDialog()
+}
+
+# Fonction pour gérer les ordinateurs
+function Gerer_Ordinateurs {
+    $listBox = New-Object System.Windows.Forms.ListBox
+    $form = Creer_Formulaire "Gérer les ordinateurs" "Actions ordinateur" $listBox
+
+    Add-Button "Arrêter l'ordinateur" (New-Object System.Drawing.Point(50, 70)) {
+        try {
+            Invoke-SSHCommand -SessionId $session.SessionId -Command "shutdown /s /t 0"
+            $listBox.Items.Add("Commande d'arrêt envoyée à $global:Cible.")
+            Journaliser_Evenement "Commande d'arrêt envoyée à $global:Cible"
+        } catch {
+            $listBox.Items.Add("Erreur lors de l'envoi de la commande d'arrêt")
+            Journaliser_Evenement "Erreur : Commande d'arrêt non envoyée"
+        }
+    } $form
+
+    Add-Button "Redémarrer l'ordinateur" (New-Object System.Drawing.Point(210, 70)) {
+        try {
+            Invoke-SSHCommand -SessionId $session.SessionId -Command "shutdown /r /t 0"
+            $listBox.Items.Add("Commande de redémarrage envoyée à $global:Cible.")
+            Journaliser_Evenement "Commande de redémarrage envoyée à $global:Cible"
+        } catch {
+            $listBox.Items.Add("Erreur lors de l'envoi de la commande de redémarrage")
+            Journaliser_Evenement "Erreur : Commande de redémarrage non envoyée"
+        }
+    } $form
+
+    Add-Button "Mettre en veille l'ordinateur" (New-Object System.Drawing.Point(370, 70)) {
+        try {
+            Invoke-SSHCommand -SessionId $session.SessionId -Command "rundll32.exe powrprof.dll,SetSuspendState 0,1,0"
+            $listBox.Items.Add("Commande de mise en veille envoyée à $global:Cible.")
+            Journaliser_Evenement "Commande de mise en veille envoyée à $global:Cible"
+        } catch {
+            $listBox.Items.Add("Erreur lors de l'envoi de la commande de mise en veille")
+            Journaliser_Evenement "Erreur : Commande de mise en veille non envoyée"
+        }
+    } $form
+
+    $form.ShowDialog()
+}
+
+
+
+    
+
+
+   
+
+   
+     # Fonction pour gérer les options d'audit
+function Options_Audit {
+    $listBox = New-Object System.Windows.Forms.ListBox
+    $form = Creer_Formulaire "Options d'audit" "Actions d'audit" $listBox
+
+    Add-Button "Scanner les ports ouverts" (New-Object System.Drawing.Point(50, 70)) {
+        $listBox.Items.Clear()
+        try {
+            $result = Invoke-SSHCommand -SessionId $session.SessionId -Command "netstat -an"
+            $listBox.Items.Add("Ports ouverts sur $global:Cible:")
+            $ports = $result.Output -split "`n"
+            foreach ($port in $ports) {
+                if ($port -match "LISTENING") {
+                    $item = New-Object System.Windows.Forms.ListViewItem("$port - ouvert")
+                    $item.ForeColor = 'Green'
+                    $listBox.Items.Add($item)
+                } else {
+                    $listBox.Items.Add($port)
+                }
+            }
+            Journaliser_Evenement "Scan des ports ouverts effectué"
+        } catch {
+            $listBox.Items.Add("Erreur lors du scan des ports ouverts")
+            Journaliser_Evenement "Erreur : Scan des ports ouverts non effectué"
+        }
+    } $form
+
+    Add-Button "Vérifier l'espace disque" (New-Object System.Drawing.Point(210, 70)) {
+        $listBox.Items.Clear()
+        try {
+            $result = Invoke-SSHCommand -SessionId $session.SessionId -Command "wmic logicaldisk get size,freespace,caption"
+            $listBox.Items.Add("Espace disque sur $global:Cible:")
+            $listBox.Items.AddRange($result.Output -split "`n")
+            Journaliser_Evenement "Vérification de l'espace disque effectuée"
+        } catch {
+            $listBox.Items.Add("Erreur lors de la vérification de l'espace disque")
+            Journaliser_Evenement "Erreur : Vérification de l'espace disque non effectuée"
+        }
+    } $form
+
+    Add-Button "Vérifier les services en cours d'exécution" (New-Object System.Drawing.Point(370, 70)) {
+        $listBox.Items.Clear()
+        try {
+            $result = Invoke-SSHCommand -SessionId $session.SessionId -Command "net start"
+            $listBox.Items.Add("Services en cours d'exécution sur $global:Cible:")
+            $listBox.Items.AddRange($result.Output -split "`n")
+            Journaliser_Evenement "Vérification des services en cours d'exécution effectuée"
+        } catch {
+            $listBox.Items.Add("Erreur lors de la vérification des services en cours d'exécution")
+            Journaliser_Evenement "Erreur : Vérification des services en cours d'exécution non effectuée"
+        }
+    } $form
+
+    Add-Button "Vérifier les processus en cours d'exécution" (New-Object System.Drawing.Point(50, 130)) {
+        $listBox.Items.Clear()
+        try {
+            $result = Invoke-SSHCommand -SessionId $session.SessionId -Command "tasklist"
+            $listBox.Items.Add("Processus en cours d'exécution sur $global:Cible:")
+            $listBox.Items.AddRange($result.Output -split "`n")
+            Journaliser_Evenement "Vérification des processus en cours d'exécution effectuée"
+        } catch {
+            $listBox.Items.Add("Erreur lors de la vérification des processus en cours d'exécution")
+            Journaliser_Evenement "Erreur : Vérification des processus en cours d'exécution non effectuée"
+        }
+    } $form
+
+    Add-Button "Vérifier les utilisateurs connectés" (New-Object System.Drawing.Point(210, 130)) {
+        $listBox.Items.Clear()
+        try {
+            $result = Invoke-SSHCommand -SessionId $session.SessionId -Command "query user"
+            $listBox.Items.Add("Utilisateurs connectés sur $global:Cible:")
+            $listBox.Items.AddRange($result.Output -split "`n")
+            Journaliser_Evenement "Vérification des utilisateurs connectés effectuée"
+        } catch {
+            $listBox.Items.Add("Erreur lors de la vérification des utilisateurs connectés")
+            Journaliser_Evenement "Erreur : Vérification des utilisateurs connectés non effectuée"
+        }
+    } $form
+
+    Add-Button "Vérifier les journaux d'événements" (New-Object System.Drawing.Point(370, 130)) {
+        $listBox.Items.Clear()
+        try {
+            $result = Invoke-SSHCommand -SessionId $session.SessionId -Command "wevtutil qe System /c:10 /f:text"
+            $listBox.Items.Add("Derniers journaux d'événements sur $global:Cible:")
+            $listBox.Items.AddRange($result.Output -split "`n")
+            Journaliser_Evenement "Vérification des journaux d'événements effectuée"
+        } catch {
+            $listBox.Items.Add("Erreur lors de la vérification des journaux d'événements")
+            Journaliser_Evenement "Erreur : Vérification des journaux d'événements non effectuée"
+        }
+    } $form
+
+    Add-Button "Vérifier les partages réseau" (New-Object System.Drawing.Point(50, 190)) {
+        $listBox.Items.Clear()
+        try {
+            $result = Invoke-SSHCommand -SessionId $session.SessionId -Command "net share"
+            $listBox.Items.Add("Partages réseau sur $global:Cible:")
+            $listBox.Items.AddRange($result.Output -split "`n")
+            Journaliser_Evenement "Vérification des partages réseau effectuée"
+        } catch {
+            $listBox.Items.Add("Erreur lors de la vérification des partages réseau")
+            Journaliser_Evenement "Erreur : Vérification des partages réseau non effectuée"
+        }
+    } $form
+
+    Add-Button "Vérifier les connexions réseau" (New-Object System.Drawing.Point(210, 190)) {
+        $listBox.Items.Clear()
+        try {
+            $result = Invoke-SSHCommand -SessionId $session.SessionId -Command "netstat -an"
+            $listBox.Items.Add("Connexions réseau sur $global:Cible:")
+            $listBox.Items.AddRange($result.Output -split "`n")
+            Journaliser_Evenement "Vérification des connexions réseau effectuée"
+        } catch {
+            $listBox.Items.Add("Erreur lors de la vérification des connexions réseau")
+            Journaliser_Evenement "Erreur : Vérification des connexions réseau non effectuée"
+        }
+    } $form
+
+    Add-Button "Lire le fichier de log" (New-Object System.Drawing.Point(370, 190)) {
+        $listBox.Items.Clear()
+        try {
+            $logContent = Get-Content -Path $global:logFile
+            $listBox.Items.Add("Contenu du fichier de log:")
+            $listBox.Items.AddRange($logContent)
+            Journaliser_Evenement "Lecture du fichier de log effectuée"
+        } catch {
+            $listBox.Items.Add("Erreur lors de la lecture du fichier de log")
+            Journaliser_Evenement "Erreur : Lecture du fichier de log non effectuée"
+        }
+    } $form
+
+    $form.ShowDialog()
+}
+
+function Main {
+    Afficher_Menu
+}
+
+# Lancer la fonction principale
+Main
+
+# Fermer la session à la fin
+Remove-SSHSession -SessionId $session.SessionId
