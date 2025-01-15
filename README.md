@@ -27,7 +27,7 @@ L'objectif secondaire est optionnel et permet d'améliorer l'évaluation finale 
 | Sprint1  | Adel              | Barbara           | Benjamin, Maxime    | - Analyse des besoins du projet; définition des rôle de chaque membre du groupe; mise en place et interconnectivité réseau des VM. ||-----------------------------------------------------------------------------------------------------------------------------------------------|
 | Sprint2  | Barbara              | Adel           | Benjamin, Maxime    | - Création et mise en application du script **Bash** pour les VM Serveur Debian 12 et Client Ubuntu 22.04. |
 | Sprint3  | Benjamin             | Maxime         | Barbara, Adel       | - Création et mise en application du script **Powershell** pour les VM Serveur Windows Server 2022 et Client Windows 10. |
-| Sprint4  | Benjamin             | Maxime         | Barbara, Adel       | - Finalisation et test de fonctionnalités.  Démonstration du projet final |
+| Sprint4  | Maxime             | Benjamin         | Barbara, Adel       | - Finalisation et test de fonctionnalités.  Démonstration du projet final |
 
 
 ## Environnement
