@@ -11,8 +11,7 @@ $OutputEncoding = [System.Text.Encoding]::UTF8
 $global:logFile = "$PSScriptRoot\log_evt.log"
 $global:Cible = "172.16.10.20"
 $global:Utilisateur = "wilder"
-$global:Password = "Azerty1*"
-$global:Credential = New-Object System.Management.Automation.PSCredential($global:Utilisateur, $global:Password)
+
 
 # Changer la couleur de fond et de texte de la console
 $Host.UI.RawUI.BackgroundColor = "Black"
