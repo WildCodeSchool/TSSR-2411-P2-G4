@@ -90,10 +90,12 @@ On choisit une information ou un lot d'informations :
 #### Informations sur les utilisateurs :
 - Date de dernière connexion d’un utilisateur  
 - Autres informations possibles
+- etc
 
 #### Informations sur les ordinateurs clients :
 - Version de l'OS  
 - Autres informations possibles
+- etc
 
 ## Journalisation
 
