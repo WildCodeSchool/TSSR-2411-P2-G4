@@ -92,9 +92,9 @@
 
 2. **Modifier la configuration réseau** :
    - Édite le fichier de configuration réseau avec :
-     ```bash
+
      sudo nano /etc/netplan/01-netcfg.yaml
-     ```
+
 
    - Ajoute la configuration suivante (remplace `<nom_interface>` par le nom de ton interface réseau) :
      ```yaml
@@ -117,32 +117,27 @@
    ```bash
    sudo netplan apply
 Vérifier la connectivité réseau :
-bash
-Copier le code
+
 ip a
 ping -c 4 8.8.8.8
 Étape 3 : Ajouter l'utilisateur "wilder" au groupe sudo
 Par défaut, l'utilisateur créé a les droits sudo. Si ce n'est pas le cas :
 
 Ajoute wilder au groupe sudo :
-bash
-Copier le code
+
 sudo usermod -aG sudo wilder
 Vérifie les groupes de l'utilisateur :
 
-bash
-Copier le code
+
 groups wilder
 Étape 4 : Mise à jour du système
 Mets à jour les dépôts et le système :
 
-bash
-Copier le code
+
 sudo apt update && sudo apt upgrade -y
 Installe des utilitaires nécessaires :
 
-bash
-Copier le code
+
 sudo apt install net-tools vim curl -y
 Ton client Ubuntu CLILIN01 est maintenant installé et configuré avec :
 
@@ -320,9 +315,9 @@ IP fixe : 172.16.10.30/24
 ## Étape 3 : Configurer l’adresse IP fixe
 1. **Modifier la configuration réseau** :
    - Ouvre le fichier de configuration Netplan :
-     ```bash
+
      nano /etc/netplan/01-netcfg.yaml
-     ```
+
    - Ajoute ou modifie les paramètres suivants :
      ```yaml
      network:
@@ -340,23 +335,20 @@ IP fixe : 172.16.10.30/24
      ```
 
 2. **Appliquer la configuration** :
-   ```bash
+
    sudo netplan apply
 Vérifier la connectivité réseau :
-bash
-Copier le code
+
 ip a
 ping -c 4 8.8.8.8
 Étape 4 : Mise à jour et configuration du système
 Mettre à jour les dépôts et le système :
 
-bash
-Copier le code
+
 apt update && apt upgrade -y
 Installer des utilitaires nécessaires :
 
-bash
-Copier le code
+
 apt install net-tools vim curl -y
 Résumé de la configuration
 Nom de l'ordinateur : SRVLX01
@@ -452,33 +444,31 @@ powershell -ExecutionPolicy Bypass -File "C:\Users\Administrator\Desktop\Scripts
 
 1. Mettre à jour les paquets
 
-```bash
+
 sudo apt update
-```
 
 2. Installer OpenSSH Server
 
-```bash
 sudo apt install openssh-server -y
-```
+
 
 3. Vérifier que le service SSH est bien activé et en cours d'exécution :
 
-```bash
+
 sudo systemctl status ssh
-```
+
 
 Si le service n'est pas en cours d'exécution, démarrez-le avec la commande :
 
-```bash
+
 sudo systemctl start ssh
-```
+
 
 Pour s'assurer qu'il démarre automatiquement au démarrage du système :
 
-```bash
+
 sudo systemctl enable ssh
-```
+
 
 #### Connexion
 
@@ -486,7 +476,7 @@ sudo systemctl enable ssh
 
 1. Se connecter avec la commande dans votre terminal :
 
-```bash
+
 ssh wilder@172.16.10.30
-```
+
 
